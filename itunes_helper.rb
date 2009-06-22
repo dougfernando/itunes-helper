@@ -19,20 +19,24 @@ class ITunesHelper
     puts "Number of tracks to be analyzed: #{@tracks.count}"
     index = 1
     @tracks.each do |track|
-      if track.lyrics.empty?
+      if self.is_lyrics_empty(track.lyrics)
         lyrics = @lyrics_service.get_lyrics(track.Artist(), track.Name())
-
-        if not lyrics.empty?
+        
+        if self.is_lyrics_empty(lyrics)
+          self.print_track(index, @tracks.count, track, "lyrics WAS NOT found")
+        else
           track.lyrics = @lyrics_service.get_lyrics(track.Artist(), track.Name())
           self.print_track(index, @tracks.count, track, "lyrics WAS found and set")
-        else
-          self.print_track(index, @tracks.count, track, "lyrics WAS NOT found")
         end
       else
         self.print_track(index, @tracks.count, track, "already had lyrics")
       end
       index = index + 1
     end
+  end
+
+  def is_lyrics_empty(lyrics)
+    lyrics.empty? or lyrics == "Not found"
   end
 
   def print_track(index, total, track, result) 
